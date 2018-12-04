@@ -1,0 +1,5 @@
+<job>
+<script language="JScript" src="binarybuffer.js"/>
+<script language="JScript" src="makebmpfile.js"/>
+<script language="JScript" src="bin2bmp.js"/>
+</job>
