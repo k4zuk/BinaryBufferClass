@@ -22,7 +22,9 @@
 	BinaryBuffer.prototype.getUint32LE()    // get the Uint32 value (little-endian)
 
 ## その他
-言語の仕様により素直に実装できないため少し工夫している。
+言語の仕様により素直に実装できないため ここでは少し工夫した実装をして解消している。
+
+以下は素直に実装しようとした場合に問題となる点。
 * Arrayを継承するとlength=0のまま変化しない。
 * adTypeBinaryの読み書きは特殊なオブジェクト型のためデータ編集できない。
 * charCodeAt()0x80以降に戻り値が16bit値になる個所がある。またその値に規則性がない。
