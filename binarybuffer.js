@@ -7,13 +7,15 @@ function BinaryBuffer(arrayLength) {
 
 BinaryBuffer.prototype.length = 0;
 
-var methods = ['push', 'pop', 'unshift', 'shift'];
+(function() {
+	var methods = ['push', 'pop', 'unshift', 'shift'];
 
-for(var i = 0; i < methods.length; i++) (function(name) {
-	BinaryBuffer.prototype[name] = function() {
-		return Array.prototype[name].apply(this, arguments);
-	};
-})(methods[i]);
+	for(var i = 0; i < methods.length; i++) (function(name) {
+		BinaryBuffer.prototype[name] = function() {
+			return Array.prototype[name].apply(this, arguments);
+		};
+	})(methods[i]);
+})();
 
 
 /**
@@ -65,77 +67,81 @@ BinaryBuffer.prototype.Write = function(filename) {
 /**
  * Get a multi-byte value
  */
-BinaryBuffer.prototype.getUint8 = function(byteOffset) {
-	return this.getUint(byteOffset, 1);
-};
+(function() {
+	BinaryBuffer.prototype.getUint8 = function(byteOffset) {
+		return getUint(this, byteOffset, 1);
+	};
 
-BinaryBuffer.prototype.getUint16 = function(byteOffset) {
-	return this.getUint(byteOffset, 2);
-};
+	BinaryBuffer.prototype.getUint16 = function(byteOffset) {
+		return getUint(this, byteOffset, 2);
+	};
 
-BinaryBuffer.prototype.getUint16LE = function(byteOffset) {
-	return this.getUintLE(byteOffset, 2);
-};
+	BinaryBuffer.prototype.getUint16LE = function(byteOffset) {
+		return getUintLE(this, byteOffset, 2);
+	};
 
-BinaryBuffer.prototype.getUint32 = function(byteOffset) {
-	return this.getUint(byteOffset, 4);
-};
+	BinaryBuffer.prototype.getUint32 = function(byteOffset) {
+		return getUint(this, byteOffset, 4);
+	};
 
-BinaryBuffer.prototype.getUint32LE = function(byteOffset) {
-	return this.getUintLE(byteOffset, 4);
-};
+	BinaryBuffer.prototype.getUint32LE = function(byteOffset) {
+		return getUintLE(this, byteOffset, 4);
+	};
 
-BinaryBuffer.prototype.getUint = function(byteOffset, n) {
-	var value = 0;
-	for(var i = 0; i < n; i++) {
-		value <<= 8;
-		value += this[byteOffset+i] & 0xff;
+	function getUint(buffer, byteOffset, n) {
+		var value = 0;
+		for(var i = 0; i < n; i++) {
+			value <<= 8;
+			value += buffer[byteOffset+i] & 0xff;
+		}
+		return value;
 	}
-	return value;
-};
 
-BinaryBuffer.prototype.getUintLE = function(byteOffset, n) {
-	var value = 0;
-	for(var i = n-1; i >= 0; i--) {
-		value <<= 8;
-		value += this[byteOffset+i] & 0xff;
+	function getUintLE(buffer, byteOffset, n) {
+		var value = 0;
+		for(var i = n-1; i >= 0; i--) {
+			value <<= 8;
+			value += buffer[byteOffset+i] & 0xff;
+		}
+		return value;
 	}
-	return value;
-};
+})();
 
 /**
  * Set a multi-byte value
  */
-BinaryBuffer.prototype.setUint8 = function(byteOffset, value) {
-	this.setUint(byteOffset, value, 1);
-};
+(function() {
+	BinaryBuffer.prototype.setUint8 = function(byteOffset, value) {
+		setUint(this, byteOffset, value, 1);
+	};
 
-BinaryBuffer.prototype.setUint16 = function(byteOffset, value) {
-	this.setUint(byteOffset, value, 2);
-};
+	BinaryBuffer.prototype.setUint16 = function(byteOffset, value) {
+		setUint(this, byteOffset, value, 2);
+	};
 
-BinaryBuffer.prototype.setUint16LE = function(byteOffset, value) {
-	this.setUintLE(byteOffset, value, 2);
-};
+	BinaryBuffer.prototype.setUint16LE = function(byteOffset, value) {
+		setUintLE(this, byteOffset, value, 2);
+	};
 
-BinaryBuffer.prototype.setUint32 = function(byteOffset, value) {
-	this.setUint(byteOffset, value, 4);
-};
+	BinaryBuffer.prototype.setUint32 = function(byteOffset, value) {
+		setUint(this, byteOffset, value, 4);
+	};
 
-BinaryBuffer.prototype.setUint32LE = function(byteOffset, value) {
-	this.setUintLE(byteOffset, value, 4);
-};
+	BinaryBuffer.prototype.setUint32LE = function(byteOffset, value) {
+		setUintLE(this, byteOffset, value, 4);
+	};
 
-BinaryBuffer.prototype.setUint = function(byteOffset, value, n) {
-	for(var i = n-1; i >= 0; i--) {
-		this[byteOffset+i] = value & 0xff;
-		value >>= 8;
+	function setUint(buffer, byteOffset, value, n) {
+		for(var i = n-1; i >= 0; i--) {
+			buffer[byteOffset+i] = value & 0xff;
+			value >>= 8;
+		}
 	}
-};
 
-BinaryBuffer.prototype.setUintLE = function(byteOffset, value, n) {
-	for(var i = 0; i < n; i++) {
-		this[byteOffset+i] = value & 0xff;
-		value >>= 8;
+	function setUintLE(buffer, byteOffset, value, n) {
+		for(var i = 0; i < n; i++) {
+			buffer[byteOffset+i] = value & 0xff;
+			value >>= 8;
+		}
 	}
-};
+})();
