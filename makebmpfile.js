@@ -2,6 +2,22 @@
  * Make BMP File
  */
 function makeBmpFile(filename, imageWidth, imageHeight) {
+	var imageSize = imageWidth * imageHeight;
+
+	// read image data
+	var imageBuffer = new BinaryBuffer(imageSize);
+	imageBuffer.Read(filename);
+
+	var bmpBuffer = makeBmpData(imageBuffer, imageWidth, imageHeight);
+
+	// write to a bmp file
+	bmpBuffer.Write(filename + ".bmp");
+}
+
+/**
+ * Make BMP Data
+ */
+function makeBmpData(imageBuffer, imageWidth, imageHeight) {
 	var headerSize = 14 + 40 + 256*4;
 	var imageSize = ((imageWidth+3)/4)*4 * imageHeight;
 	var fileSize = headerSize + imageSize;
@@ -11,23 +27,18 @@ function makeBmpFile(filename, imageWidth, imageHeight) {
 	// set bmp header
 	setBmpHeader(bmpBuffer, imageWidth, imageHeight);
 
-	// read image data
-	var inBuffer = new BinaryBuffer(imageSize);
-	inBuffer.Read(filename);
-
 	// set image data
 	var pt = headerSize;
 	for(var i = 0; i < imageHeight; i++) {
 		for(var j = 0; j < imageWidth; j++) {
-			bmpBuffer[pt++] = inBuffer[imageWidth * (imageHeight-1-i) + j];
+			bmpBuffer[pt++] = imageBuffer[imageWidth * (imageHeight-1-i) + j];
 		}
 		for(var k = j % 4; k > 0 & k < 4; k++) {
 			bmpBuffer[pt++] = 0;
 		}
 	}
 
-	// write to a bmp file
-	bmpBuffer.Write(filename + ".bmp");
+	return bmpBuffer;
 }
 
 /**
